@@ -1,41 +1,29 @@
-import { ref, onMounted, onUnmounted, watch } from "vue";
-import { reactive } from "@vue/reactivity";
+import { ref, reactive, computed } from '@vue/reactivity';
 
 
-export function colorManager () {
-     const color = ref("");
-     let colors = ref([]);
-     
-     const addColor = (color) => {
-          colors.value = [...colors.value, color];
-     };
-     const removeColor = () => {};
-     const fetchColors = () => {
-          const defaultColors = [
-               { name: "Red", hex: "#FF0000" },
-               { name: "Green", hex: "#00FF00" },
-          ];
-          // get colors in localStorage
-          const storedColors = localStorage.getItem("colors");
-          console.log("storedColors", storedColors);
-          if (storedColors) {
-               return (colors.value = JSON.parse(storedColors));
+const colorManager = () => {
+     const colors = [ "green", "red", "blue", "purple"];
+     let message = ref("Pick a color.....");
+
+     const matchColor = (value) => {
+          //do a random color based on the array index
+          const randomNumber = Math.floor(Math.random() * 3) + 1; 
+          //between 1-4
+
+          if (colors[randomNumber] === value ){
+               message.value = `You guessed right! [answer: ${colors[randomNumber]}]`;
+               return;
           }
-          colors.value = defaultColors;
+
+          message.value = `You guessed wrong! [answer: ${colors[randomNumber]}]`;
+
+          
+
+
      }
+     return { colors, message, matchColor };
+    
+};
+ export default colorManager;
 
-     onMounted(() => {
-          fetchColors();
-     })
 
-    watch(colors, (val) => {
-    localStorage.setItem("colors", JSON.stringify(colors.value));
-    });
-
-    return {
-     colors,
-     color,
-     addColor,
-    };
-
-}
